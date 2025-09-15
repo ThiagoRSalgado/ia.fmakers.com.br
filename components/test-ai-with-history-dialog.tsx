@@ -1856,45 +1856,139 @@ Responda apenas com a mensagem que o cliente enviaria, sem explicações adicion
                           }`}
                         >
                           {(() => {
+                            if (message.type === "audio" && message.audioData) {
+                              try {
+                                // Criar blob URL ao invés de data URL para melhor compatibilidade
+                                const audioBlob = new Blob(
+                                  [Uint8Array.from(atob(message.audioData.base64), (c) => c.charCodeAt(0))],
+                                  {
+                                    type: message.audioData.mimeType.split(";")[0], // Remove codecs para compatibilidade
+                                  },
+                                )
+                                const audioUrl = URL.createObjectURL(audioBlob)
+
+                                return (
+                                  <div>
+                                    <CustomAudioPlayer
+                                      src={audioUrl}
+                                      variant={message.sender === "user" ? "user" : "bot"}
+                                    />
+                                  </div>
+                                )
+                              } catch (error) {
+                                console.error("[v0] Error creating audio blob:", error)
+                                // Fallback para data URL se blob falhar
+                                const audioUrl = `data:${message.audioData.mimeType.split(";")[0]};base64,${message.audioData.base64}`
+                                return (
+                                  <div>
+                                    <CustomAudioPlayer
+                                      src={audioUrl}
+                                      variant={message.sender === "user" ? "user" : "bot"}
+                                    />
+                                  </div>
+                                )
+                              }
+                            }
+
                             if (message.type === "file" && message.fileData?.mimeType.startsWith("image/")) {
-                              const imageUrl = `data:${message.fileData.mimeType};base64,${message.fileData.base64}`
-                              return (
-                                <div>
-                                  <img
-                                    src={imageUrl || "/placeholder.svg"}
-                                    alt={message.fileData.fileName || "Imagem enviada"}
-                                    className="max-w-full h-auto rounded-lg mb-2"
-                                    style={{ maxHeight: "300px" }}
-                                  />
-                                </div>
-                              )
+                              try {
+                                const imageBlob = new Blob(
+                                  [Uint8Array.from(atob(message.fileData.base64), (c) => c.charCodeAt(0))],
+                                  {
+                                    type: message.fileData.mimeType,
+                                  },
+                                )
+                                const imageUrl = URL.createObjectURL(imageBlob)
+
+                                return (
+                                  <div>
+                                    <img
+                                      src={imageUrl || "/placeholder.svg"}
+                                      alt={message.fileData.fileName || "Imagem enviada"}
+                                      className="max-w-full h-auto rounded-lg mb-2"
+                                      style={{ maxHeight: "300px" }}
+                                      onError={(e) => {
+                                        // Fallback para data URL se blob falhar
+                                        const target = e.target as HTMLImageElement
+                                        target.src = `data:${message.fileData!.mimeType};base64,${message.fileData!.base64}`
+                                      }}
+                                    />
+                                  </div>
+                                )
+                              } catch (error) {
+                                console.error("[v0] Error creating image blob:", error)
+                                const imageUrl = `data:${message.fileData.mimeType};base64,${message.fileData.base64}`
+                                return (
+                                  <div>
+                                    <img
+                                      src={imageUrl || "/placeholder.svg"}
+                                      alt={message.fileData.fileName || "Imagem enviada"}
+                                      className="max-w-full h-auto rounded-lg mb-2"
+                                      style={{ maxHeight: "300px" }}
+                                    />
+                                  </div>
+                                )
+                              }
                             }
 
                             if (message.type === "file" && message.fileData?.mimeType === "application/pdf") {
-                              const pdfUrl = `data:${message.fileData.mimeType};base64,${message.fileData.base64}`
-                              return (
-                                <div>
-                                  <div className="bg-gray-50 rounded-lg p-3 border mb-2">
-                                    <div className="flex items-center gap-3">
-                                      <FileText className="w-8 h-8 text-red-500" />
-                                      <div className="flex-1">
-                                        <div className="font-medium text-gray-700">{message.fileData.fileName}</div>
-                                        <div className="text-sm text-gray-500">
-                                          Documento PDF • {(message.fileData.size / 1024 / 1024).toFixed(2)} MB
+                              try {
+                                const pdfBlob = new Blob(
+                                  [Uint8Array.from(atob(message.fileData.base64), (c) => c.charCodeAt(0))],
+                                  {
+                                    type: message.fileData.mimeType,
+                                  },
+                                )
+                                const pdfUrl = URL.createObjectURL(pdfBlob)
+
+                                return (
+                                  <div>
+                                    <div className="bg-gray-50 rounded-lg p-3 border mb-2">
+                                      <div className="flex items-center gap-3">
+                                        <FileText className="w-8 h-8 text-red-500" />
+                                        <div className="flex-1">
+                                          <p className="font-medium text-sm">{message.fileData.fileName}</p>
+                                          <p className="text-xs text-gray-500">
+                                            {(message.fileData.size / 1024).toFixed(1)} KB
+                                          </p>
                                         </div>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => window.open(pdfUrl, "_blank")}
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </Button>
                                       </div>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => window.open(pdfUrl, "_blank")}
-                                        className="text-gray-500 hover:text-gray-700"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </Button>
                                     </div>
                                   </div>
-                                </div>
-                              )
+                                )
+                              } catch (error) {
+                                console.error("[v0] Error creating PDF blob:", error)
+                                const pdfUrl = `data:${message.fileData.mimeType};base64,${message.fileData.base64}`
+                                return (
+                                  <div>
+                                    <div className="bg-gray-50 rounded-lg p-3 border mb-2">
+                                      <div className="flex items-center gap-3">
+                                        <FileText className="w-8 h-8 text-red-500" />
+                                        <div className="flex-1">
+                                          <p className="font-medium text-sm">{message.fileData.fileName}</p>
+                                          <p className="text-xs text-gray-500">
+                                            {(message.fileData.size / 1024).toFixed(1)} KB
+                                          </p>
+                                        </div>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => window.open(pdfUrl, "_blank")}
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )
+                              }
                             }
 
                             if (message.type === "audio" && message.audioData) {
