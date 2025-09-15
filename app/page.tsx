@@ -7,7 +7,7 @@ import { CreateAgentDialog } from "@/components/create-agent-dialog"
 import { EditPromptDialog } from "@/components/edit-prompt-dialog"
 import { ConfigureAgentDialog } from "@/components/configure-agent-dialog"
 import { AgentHistoryDialog } from "@/components/agent-history-dialog"
-import { TestAIDialog } from "@/components/test-ai-dialog"
+import { TestAIWithHistoryDialog } from "@/components/test-ai-with-history-dialog" // importando nova interface
 import { Button } from "@/components/ui/button"
 import { Plus, Bot, Activity } from "lucide-react"
 import type { Agent } from "@/types/agent"
@@ -325,7 +325,7 @@ export default function Dashboard() {
         agent={historyDialog.agent}
       />
 
-      <TestAIDialog
+      <TestAIWithHistoryDialog
         open={testAIDialog.open}
         onOpenChange={(open) => setTestAIDialog({ open, agent: null })}
         agent={testAIDialog.agent}

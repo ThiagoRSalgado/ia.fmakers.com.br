@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TestAIDialog } from "@/components/test-ai-dialog"
+import { TestAIWithHistoryDialog } from "@/components/test-ai-with-history-dialog" // importando nova interface
 import { CheckCircle, XCircle, TestTube, Clock, Lightbulb } from "lucide-react"
 import type { PromptSuggestion } from "@/types/prompt-suggestion"
 import type { Agent } from "@/types/agent"
@@ -327,7 +327,7 @@ export function PromptSuggestionsDialog({ open, onOpenChange, user, onPromptUpda
         </DialogContent>
       </Dialog>
 
-      <TestAIDialog
+      <TestAIWithHistoryDialog
         open={testDialogOpen}
         onOpenChange={setTestDialogOpen}
         agent={testingAgent}
