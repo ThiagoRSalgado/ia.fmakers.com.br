@@ -95,12 +95,18 @@ export function AgentCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 relative z-10"
+                  onClick={(e) => {
+                    console.log("[v0] Three dots button clicked")
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border-gray-200">
+              <DropdownMenuContent align="end" className="bg-white border-gray-200 z-50" sideOffset={5}>
                 <DropdownMenuItem onClick={() => onEditPrompt(agent)} className="text-gray-700 hover:bg-gray-50">
                   Editar Prompt
                 </DropdownMenuItem>
