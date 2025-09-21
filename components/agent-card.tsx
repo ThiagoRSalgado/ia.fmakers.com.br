@@ -1,12 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Bot, Trash2, Clock } from "lucide-react"
+import { MoreVertical, Bot, Trash2, Clock, Edit, Settings, History } from "lucide-react"
 import type { Agent } from "@/types/agent"
 
 interface AgentCardProps {
@@ -29,10 +30,23 @@ export function AgentCard({
   onTestAI,
 }: AgentCardProps) {
   const [isActive, setIsActive] = useState(agent.is_active)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleToggleActive = async (checked: boolean) => {
     setIsActive(checked)
     await onUpdate(agent.id, { is_active: checked })
+  }
+
+  const toggleMenu = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log("[v0] Three dots button clicked - custom menu")
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const handleMenuItemClick = (action: () => void) => {
+    action()
+    setIsMenuOpen(false)
   }
 
   return (
@@ -90,38 +104,65 @@ export function AgentCard({
               <span className="text-xs text-gray-500">{isActive ? "ON" : "OFF"}</span>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 relative z-10"
-                  onClick={(e) => {
-                    console.log("[v0] Three dots button clicked")
-                    e.preventDefault()
-                    e.stopPropagation()
-                  }}
-                  onMouseDown={(e) => e.preventDefault()}
-                >
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border-gray-200 z-50" sideOffset={5}>
-                <DropdownMenuItem onClick={() => onEditPrompt(agent)} className="text-gray-700 hover:bg-gray-50">
-                  Editar Prompt
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onConfigure(agent)} className="text-gray-700 hover:bg-gray-50">
-                  Configurar
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onViewHistory(agent)} className="text-gray-700 hover:bg-gray-50">
-                  Histórico
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(agent.id)} className="text-red-600 hover:bg-red-50">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Deletar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 relative z-10 touch-manipulation"
+                onClick={toggleMenu}
+                onTouchStart={toggleMenu}
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+
+              {isMenuOpen && (
+                <>
+                  {/* Overlay para fechar menu ao clicar fora */}
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsMenuOpen(false)}
+                    onTouchStart={() => setIsMenuOpen(false)}
+                  />
+
+                  {/* Menu customizado */}
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1">
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                      onClick={() => handleMenuItemClick(() => onEditPrompt(agent))}
+                      onTouchStart={() => handleMenuItemClick(() => onEditPrompt(agent))}
+                    >
+                      <Edit className="h-4 w-4" />
+                      Editar Prompt
+                    </button>
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                      onClick={() => handleMenuItemClick(() => onConfigure(agent))}
+                      onTouchStart={() => handleMenuItemClick(() => onConfigure(agent))}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Configurar
+                    </button>
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                      onClick={() => handleMenuItemClick(() => onViewHistory(agent))}
+                      onTouchStart={() => handleMenuItemClick(() => onViewHistory(agent))}
+                    >
+                      <History className="h-4 w-4" />
+                      Histórico
+                    </button>
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                      onClick={() => handleMenuItemClick(() => onDelete(agent.id))}
+                      onTouchStart={() => handleMenuItemClick(() => onDelete(agent.id))}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Deletar
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
