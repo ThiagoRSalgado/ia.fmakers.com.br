@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -31,6 +32,8 @@ export function AgentCard({
 }: AgentCardProps) {
   const [isActive, setIsActive] = useState(agent.is_active)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
 
   const handleToggleActive = async (checked: boolean) => {
     setIsActive(checked)
@@ -41,12 +44,90 @@ export function AgentCard({
     e.preventDefault()
     e.stopPropagation()
     console.log("[v0] Three dots button clicked - custom menu")
+
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setMenuPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.right + window.scrollX - 192, // 192px = w-48
+      })
+    }
+
     setIsMenuOpen(!isMenuOpen)
   }
 
   const handleMenuItemClick = (action: () => void) => {
     action()
     setIsMenuOpen(false)
+  }
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMenuOpen(false)
+      }
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener("keydown", handleEscape)
+      return () => document.removeEventListener("keydown", handleEscape)
+    }
+  }, [isMenuOpen])
+
+  const MenuPortal = () => {
+    if (!isMenuOpen) return null
+
+    return createPortal(
+      <>
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setIsMenuOpen(false)}
+          onTouchStart={() => setIsMenuOpen(false)}
+        />
+
+        <div
+          className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+          style={{
+            top: `${menuPosition.top}px`,
+            left: `${menuPosition.left}px`,
+          }}
+        >
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+            onClick={() => handleMenuItemClick(() => onEditPrompt(agent))}
+            onTouchStart={() => handleMenuItemClick(() => onEditPrompt(agent))}
+          >
+            <Edit className="h-4 w-4" />
+            Editar Prompt
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+            onClick={() => handleMenuItemClick(() => onConfigure(agent))}
+            onTouchStart={() => handleMenuItemClick(() => onConfigure(agent))}
+          >
+            <Settings className="h-4 w-4" />
+            Configurar
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+            onClick={() => handleMenuItemClick(() => onViewHistory(agent))}
+            onTouchStart={() => handleMenuItemClick(() => onViewHistory(agent))}
+          >
+            <History className="h-4 w-4" />
+            Histórico
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+            onClick={() => handleMenuItemClick(() => onDelete(agent.id))}
+            onTouchStart={() => handleMenuItemClick(() => onDelete(agent.id))}
+          >
+            <Trash2 className="h-4 w-4" />
+            Deletar
+          </button>
+        </div>
+      </>,
+      document.body,
+    )
   }
 
   return (
@@ -78,7 +159,9 @@ export function AgentCard({
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="truncate text-lg font-semibold tracking-tight text-gray-900">{agent.name}</h3>
+                <h3 className="truncate text-lg font-semibold tracking-tight text-gray-900">
+                  {agent.name.length > 20 ? `${agent.name.substring(0, 20)}...` : agent.name}
+                </h3>
                 <Badge
                   variant={isActive ? "default" : "secondary"}
                   className={`text-xs ${
@@ -104,65 +187,17 @@ export function AgentCard({
               <span className="text-xs text-gray-500">{isActive ? "ON" : "OFF"}</span>
             </div>
 
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 relative z-10 touch-manipulation"
-                onClick={toggleMenu}
-                onTouchStart={toggleMenu}
-                style={{ WebkitTapHighlightColor: "transparent" }}
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-
-              {isMenuOpen && (
-                <>
-                  {/* Overlay para fechar menu ao clicar fora */}
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setIsMenuOpen(false)}
-                    onTouchStart={() => setIsMenuOpen(false)}
-                  />
-
-                  {/* Menu customizado */}
-                  <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1">
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                      onClick={() => handleMenuItemClick(() => onEditPrompt(agent))}
-                      onTouchStart={() => handleMenuItemClick(() => onEditPrompt(agent))}
-                    >
-                      <Edit className="h-4 w-4" />
-                      Editar Prompt
-                    </button>
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                      onClick={() => handleMenuItemClick(() => onConfigure(agent))}
-                      onTouchStart={() => handleMenuItemClick(() => onConfigure(agent))}
-                    >
-                      <Settings className="h-4 w-4" />
-                      Configurar
-                    </button>
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                      onClick={() => handleMenuItemClick(() => onViewHistory(agent))}
-                      onTouchStart={() => handleMenuItemClick(() => onViewHistory(agent))}
-                    >
-                      <History className="h-4 w-4" />
-                      Histórico
-                    </button>
-                    <button
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                      onClick={() => handleMenuItemClick(() => onDelete(agent.id))}
-                      onTouchStart={() => handleMenuItemClick(() => onDelete(agent.id))}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Deletar
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <Button
+              ref={buttonRef}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 relative z-10 touch-manipulation"
+              onClick={toggleMenu}
+              onTouchStart={toggleMenu}
+              style={{ WebkitTapHighlightColor: "transparent" }}
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
@@ -190,6 +225,8 @@ export function AgentCard({
           </Button>
         </div>
       </CardContent>
+
+      <MenuPortal />
     </Card>
   )
 }

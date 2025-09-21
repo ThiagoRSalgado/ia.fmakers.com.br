@@ -78,7 +78,7 @@ export default function RegisterPage() {
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Image
-              src="https://modelo1.agenciaart.com.br/wp-content/uploads/2025/08/Logo-Positivo-2.png"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/Logo-Positivo-2-GhxL9ACcKGMXrzNgQmS85ANZE0TtkU.png"
               alt="Flow Makers"
               width={200}
               height={60}

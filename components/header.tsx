@@ -70,7 +70,7 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <Image
-              src="https://modelo1.agenciaart.com.br/wp-content/uploads/2025/08/Logo-Positivo-2.png"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/Logo-Positivo-2-GhxL9ACcKGMXrzNgQmS85ANZE0TtkU.png"
               alt="Flow Makers"
               width={120}
               height={40}
