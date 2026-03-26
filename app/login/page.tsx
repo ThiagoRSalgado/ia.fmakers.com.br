@@ -61,7 +61,7 @@ export default function LoginPage() {
       }}
     >
       <div className="absolute inset-0 bg-black/20"></div>
-      <Card className="w-full max-w-md text-white rounded-3xl relative z-10 backdrop-blur-sm border border-white/10 leading-7 gap-[30px] bg-[rgba(36,94,102,1)]">
+      <Card className="w-full max-w-md text-white rounded-3xl relative z-10 backdrop-blur-sm border border-white/10 leading-7 gap-[30px] bg-[rgba(36,94,102,1)] py-8">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-white">Entrar</CardTitle>
           <CardDescription className="text-slate-100">
