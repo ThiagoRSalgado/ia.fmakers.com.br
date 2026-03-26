@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
+
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -69,13 +69,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/Logo-Positivo-2-GhxL9ACcKGMXrzNgQmS85ANZE0TtkU.png"
-              alt="Flow Makers"
-              width={120}
-              height={40}
-              className="h-8 w-auto"
-            />
+            <span className="text-xl font-bold text-white">Painel IA</span>
           </div>
 
           {/* Desktop Navigation */}

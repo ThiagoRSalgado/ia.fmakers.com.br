@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -76,15 +76,6 @@ export default function RegisterPage() {
 
       <Card className="w-full max-w-md text-white rounded-3xl bg-[rgba(26,102,113,0.95)] backdrop-blur-sm border-flow-medium-teal/30 relative z-10 border-transparent">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/Logo-Positivo-2-GhxL9ACcKGMXrzNgQmS85ANZE0TtkU.png"
-              alt="Flow Makers"
-              width={200}
-              height={60}
-              className="h-12 w-auto"
-            />
-          </div>
           <CardTitle className="text-2xl font-bold text-white">Criar Conta</CardTitle>
           <CardDescription className="text-white/80">
             Cadastre-se para começar a gerenciar seus agentes de IA

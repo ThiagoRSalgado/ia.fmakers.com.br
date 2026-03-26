@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -63,16 +63,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-black/20"></div>
       <Card className="w-full max-w-md text-white rounded-3xl relative z-10 backdrop-blur-sm border border-white/10 leading-7 gap-[30px] bg-[rgba(36,94,102,1)]">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/Logo-Positivo-2-GhxL9ACcKGMXrzNgQmS85ANZE0TtkU.png"
-              alt="Flow Makers"
-              width={200}
-              height={60}
-              className="h-12 w-auto"
-            />
-          </div>
-          <CardTitle className="text-2xl font-bold text-flow-dark-teal">Entrar</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">Entrar</CardTitle>
           <CardDescription className="text-slate-100">
             Acesse sua conta para gerenciar seus agentes de IA
           </CardDescription>
