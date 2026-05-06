@@ -13,9 +13,6 @@ export const metadata: Metadata = {
   title: "Flow Makers - Painel de Gestão de IA",
   description: "Plataforma inteligente de gestão e configuração de Agentes de IA para o mercado de energia",
   generator: "v0.app",
-  icons: {
-    icon: "https://www.fmakers.com.br/wp-content/uploads/2025/08/Favicon-2.svg",
-  },
 }
 
 export default function RootLayout({
